@@ -31,6 +31,8 @@ async function request<T>(path: string, init: RequestInit = {}, timeoutMs = 70_0
     throw new ApiError("offline", 0);
   }
   const body = await res.json().catch(() => null);
+  // A non-JSON reply (e.g. the host's HTML 404 page) means we are not talking to our API at all.
+  if (body === null) throw new ApiError("offline", 0);
   if (!res.ok) {
     const detail = typeof body?.detail === "string" ? body.detail : "";
     throw new ApiError(detail, res.status);

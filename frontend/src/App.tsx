@@ -11,7 +11,7 @@ import { LANGS, STRINGS, type Lang, type Strings } from "./i18n";
 type Msg =
   | { id: string; role: "user"; text: string }
   | { id: string; role: "assistant"; data: ChatResponse; feedback?: boolean }
-  | { id: string; role: "error"; text: string; retry: string };
+  | { id: string; role: "error"; text: string; retry: string; userId: string };
 type AssistantMsg = Extract<Msg, { role: "assistant" }>;
 type Phase = "idle" | "recording" | "transcribing" | "review" | "thinking";
 type ServerState = SttStatus | "checking" | "offline";
@@ -85,7 +85,8 @@ export default function App() {
       speech.stop();
       setNotice(null);
       setMicError(null);
-      setMessages((m) => [...m, { id: uid(), role: "user", text: q }]);
+      const userId = uid();
+      setMessages((m) => [...m, { id: userId, role: "user", text: q }]);
       setDraft("");
       setPhase("thinking");
       try {
@@ -97,7 +98,7 @@ export default function App() {
       } catch (e) {
         const offline = e instanceof ApiError && e.status === 0;
         if (offline) setServer("offline");
-        setMessages((m) => [...m, { id: uid(), role: "error", text: offline ? t.offlineHelp : (e as ApiError).message || t.errGeneric, retry: q }]);
+        setMessages((m) => [...m, { id: uid(), role: "error", text: offline ? t.offlineHelp : (e as ApiError).message || t.errGeneric, retry: q, userId }]);
       } finally {
         setPhase("idle");
       }
@@ -184,7 +185,7 @@ export default function App() {
                   {m.text === t.offlineHelp ? <WifiOff className="mt-0.5 size-5 shrink-0" aria-hidden /> : <AlertCircle className="mt-0.5 size-5 shrink-0" aria-hidden />}
                   <div className="space-y-2">
                     <p>{m.text}</p>
-                    <button onClick={() => { setMessages((all) => all.filter((x) => x.id !== m.id)); ask(m.retry); }} className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-sm font-medium ring-1 ring-red-200 hover:bg-red-100">
+                    <button onClick={() => { setMessages((all) => all.filter((x) => x.id !== m.id && x.id !== m.userId)); ask(m.retry); }} className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-sm font-medium ring-1 ring-red-200 hover:bg-red-100">
                       <RefreshCw className="size-4" aria-hidden /> {t.retry}
                     </button>
                   </div>
