@@ -5,7 +5,7 @@ import {
   Volume2, WifiOff, X,
 } from "lucide-react";
 import { api, ApiError, type ChatResponse, type SttStatus } from "./api";
-import { useRecorder, useSpeech, type MicError } from "./hooks";
+import { useBrowserRecognition, useRecorder, useSpeech, type MicError } from "./hooks";
 import { LANGS, STRINGS, type Lang, type Strings } from "./i18n";
 
 type Msg =
@@ -130,19 +130,30 @@ export default function App() {
     [lang, t, checkHealth],
   );
   const recorder = useRecorder(onRecorded);
+  const micErrorText: Record<MicError, string> = { denied: t.errMicDenied, missing: t.errMicMissing, unsupported: t.errMicUnsupported, generic: t.errGeneric };
+  const browserStt = useBrowserRecognition((text, err) => {
+    if (err) setMicError(micErrorText[err]);
+    else if (!text) setMicError(t.errEmptyAudio);
+    if (err || !text) return setPhase("idle");
+    setTranscript(text);
+    setPhase("review");
+    setTimeout(() => reviewRef.current?.focus(), 50);
+  });
+  // Whisper on our server when it is up (better for accents); otherwise the browser's recognizer (Vercel-only hosting).
+  const voiceMode: "whisper" | "browser" | "none" = server === "ready" ? "whisper" : browserStt.supported ? "browser" : "none";
 
   const startRecording = async () => {
     speech.stop();
     setMicError(null);
     setNotice(null);
-    const err = await recorder.start();
-    if (err) {
-      const map: Record<MicError, string> = { denied: t.errMicDenied, missing: t.errMicMissing, unsupported: t.errMicUnsupported, generic: t.errGeneric };
-      setMicError(map[err]);
-    } else setPhase("recording");
+    const err = voiceMode === "whisper" ? await recorder.start() : browserStt.start(lang);
+    if (err) setMicError(micErrorText[err]);
+    else setPhase("recording");
   };
+  const stopRecording = () => (voiceMode === "whisper" ? recorder.stop() : browserStt.stop());
   const cancelVoice = () => {
     recorder.cancel();
+    browserStt.cancel();
     setTranscript("");
     setPhase("idle");
   };
@@ -153,17 +164,17 @@ export default function App() {
     setMicError(null);
   };
 
-  const voiceAvailable = server === "ready";
+  const voiceAvailable = voiceMode !== "none";
   const micDisabled = phase === "thinking" || phase === "transcribing";
   const onMic = () => {
     if (speech.speakingId) return speech.stop();
-    if (phase === "recording") return recorder.stop();
+    if (phase === "recording") return stopRecording();
     startRecording();
   };
 
   return (
     <div className="flex min-h-dvh flex-col">
-      <Header t={t} lang={lang} setLang={setLang} server={server} onRetry={checkHealth} onClear={messages.length ? clearChat : undefined} />
+      <Header t={t} lang={lang} setLang={setLang} server={server === "offline" || server === "checking" || !voiceAvailable ? server : "ready"} onRetry={checkHealth} onClear={messages.length ? clearChat : undefined} />
 
       <main className="mx-auto w-full max-w-2xl flex-1 px-4 pb-40 pt-4">
         <p role="note" className="flex items-start gap-2 rounded-2xl border border-saffron/30 bg-saffron-soft px-4 py-3 text-sm text-[#7a4510]">
@@ -227,11 +238,20 @@ export default function App() {
           <div className="flex items-center gap-3" role="status" aria-label={t.listening}>
             <span className="relative flex size-3"><span className="absolute inline-flex size-full animate-ping rounded-full bg-red-500 opacity-75" /><span className="relative size-3 rounded-full bg-red-600" /></span>
             <div className="min-w-0 flex-1">
-              <p className="font-medium">{t.listening} <span className="tabular-nums text-muted">0:{String(recorder.seconds).padStart(2, "0")}</span></p>
-              <Waveform analyser={recorder.analyser} />
+              {voiceMode === "whisper" ? (
+                <>
+                  <p className="font-medium">{t.listening} <span className="tabular-nums text-muted">0:{String(recorder.seconds).padStart(2, "0")}</span></p>
+                  <Waveform analyser={recorder.analyser} />
+                </>
+              ) : (
+                <>
+                  <p className="font-medium">{t.listening}</p>
+                  <p className="truncate text-sm text-muted">{browserStt.interim || "…"}</p>
+                </>
+              )}
             </div>
             <button onClick={cancelVoice} className="grid size-12 place-items-center rounded-full bg-sand text-ink hover:bg-black/10" aria-label={t.cancel} title={t.cancel}><X className="size-5" /></button>
-            <button onClick={recorder.stop} className="flex h-12 items-center gap-2 rounded-full bg-red-600 px-5 font-semibold text-white hover:bg-red-700"><Square className="size-4 fill-current" aria-hidden />{t.stop}</button>
+            <button onClick={stopRecording} className="flex h-12 items-center gap-2 rounded-full bg-red-600 px-5 font-semibold text-white hover:bg-red-700"><Square className="size-4 fill-current" aria-hidden />{t.stop}</button>
           </div>
         ) : phase === "transcribing" ? (
           <div className="flex items-center gap-3 py-2" role="status"><Loader2 className="size-5 animate-spin text-brand" aria-hidden /><p className="font-medium">{t.transcribing}</p></div>

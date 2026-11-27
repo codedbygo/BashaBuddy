@@ -1,0 +1,4 @@
+# Dependencies for the Vercel Python function (api/index.py). No Whisper here; see backend/requirements.txt for local voice.
+fastapi>=0.115,<1
+pydantic>=2.7
+python-multipart>=0.0.9

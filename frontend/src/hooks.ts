@@ -77,6 +77,77 @@ export function useRecorder(onComplete: (blob: Blob) => void) {
   return { recording, seconds, analyser, start, stop, cancel };
 }
 
+// Minimal typing for the Web Speech API (not in TypeScript's DOM lib).
+interface Recognition {
+  lang: string;
+  interimResults: boolean;
+  continuous: boolean;
+  onresult: ((e: { results: ArrayLike<ArrayLike<{ transcript: string }>> }) => void) | null;
+  onerror: ((e: { error: string }) => void) | null;
+  onend: (() => void) | null;
+  start(): void;
+  stop(): void;
+  abort(): void;
+}
+const SpeechRecognitionCtor: (new () => Recognition) | undefined =
+  typeof window !== "undefined" ? ((window as any).SpeechRecognition ?? (window as any).webkitSpeechRecognition) : undefined;
+
+/**
+ * Browser speech recognition, used when no Whisper server is available (e.g. Vercel-only hosting).
+ * Chrome sends the audio to its own speech service; BhashaBuddy never stores it.
+ */
+export function useBrowserRecognition(onComplete: (text: string, error: MicError | null) => void) {
+  const [listening, setListening] = useState(false);
+  const [interim, setInterim] = useState("");
+  const rec = useRef<{ r: Recognition; cancelled: boolean; text: string; error: MicError | null } | null>(null);
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
+
+  const start = useCallback((lang: Lang): MicError | null => {
+    if (!SpeechRecognitionCtor) return "unsupported";
+    const r = new SpeechRecognitionCtor();
+    r.lang = LANGS.find((l) => l.code === lang)!.speech;
+    r.interimResults = true;
+    r.continuous = false;
+    const state = { r, cancelled: false, text: "", error: null as MicError | null };
+    r.onresult = (e) => {
+      state.text = Array.from(e.results, (res) => res[0].transcript).join(" ").trim();
+      setInterim(state.text);
+    };
+    r.onerror = (e) => {
+      // "no-speech" and "aborted" just end with an empty transcript.
+      if (e.error === "not-allowed" || e.error === "service-not-allowed") state.error = "denied";
+      else if (e.error === "audio-capture") state.error = "missing";
+      else if (e.error === "network") state.error = "generic";
+    };
+    r.onend = () => {
+      rec.current = null;
+      setListening(false);
+      setInterim("");
+      if (!state.cancelled) onCompleteRef.current(state.text, state.error);
+    };
+    rec.current = state;
+    try {
+      r.start();
+    } catch {
+      rec.current = null;
+      return "generic";
+    }
+    setListening(true);
+    return null;
+  }, []);
+
+  const stop = useCallback(() => rec.current?.r.stop(), []);
+  const cancel = useCallback(() => {
+    if (!rec.current) return;
+    rec.current.cancelled = true;
+    rec.current.r.abort();
+  }, []);
+  useEffect(() => cancel, [cancel]);
+
+  return { supported: !!SpeechRecognitionCtor, listening, interim, start, stop, cancel };
+}
+
 export type SpeakResult = "ok" | "no-voice" | "unsupported";
 
 /** Browser SpeechSynthesis, picking a voice that matches the selected language. */

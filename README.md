@@ -4,7 +4,7 @@
 
 BhashaBuddy is a voice-first assistant that helps people in India understand government schemes, certificates and public services in Telugu, Hindi or English. You speak or type a question, check the transcript, and get a short, simple answer with the documents and steps involved. The answer can be read aloud.
 
-Built for the Scaler × Wispr Flow "Build for Bharat" hackathon. It runs without paid API keys: speech-to-text uses the open-source Faster-Whisper, answers come from a local dataset, and read-aloud uses the browser's built-in speech engine.
+Built for the Scaler × Wispr Flow "Build for Bharat" hackathon. It runs without paid API keys and deploys as a single Vercel project. Answers come from a local dataset served by a FastAPI function, voice input uses the browser's speech recognition (or the open-source Faster-Whisper when you run the backend yourself), and read-aloud uses the browser's built-in speech engine.
 
 > **Demo information.** The scheme data in this project is sample data written for the demo. It is not verified current government information. Always check eligibility and requirements on the official government portal before applying.
 
@@ -25,7 +25,9 @@ Government websites are often in formal English, spread across many portals, and
 
 ## 3. Features
 
-- **Voice input in Telugu, Hindi and English.** Recorded with the browser's MediaRecorder and transcribed on the server by Faster-Whisper.
+- **Voice input in Telugu, Hindi and English.** Two modes, picked automatically:
+  - **Whisper mode** (backend running with Faster-Whisper, e.g. locally): audio is recorded with MediaRecorder and transcribed on the server.
+  - **Browser mode** (Vercel deployment): the browser's built-in speech recognition (Chrome, Edge, Android Chrome) converts speech to text.
 - **Transcript confirmation.** You see what was heard and can edit it, send it, or record again. Nothing is sent to the assistant unchecked.
 - **Read-aloud answers.** Uses the browser's SpeechSynthesis with a voice matching the selected language. If the device has no Telugu or Hindi voice, the app says so instead of reading the text with the wrong voice.
 - **Rule-based assistant, no LLM.** Detects intent (documents, eligibility, how to apply, general info), matches the service, and answers only from the dataset. It remembers the last service, so "What documents are needed?" works as a follow-up.
@@ -39,12 +41,13 @@ Government websites are often in formal English, spread across many portals, and
 
 ```mermaid
 flowchart LR
-    subgraph Browser["Browser (Vercel, HTTPS)"]
+    subgraph Browser["Browser"]
         UI["React UI<br/>language selector, chat"]
         MR["MediaRecorder<br/>mic audio"]
+        SR["SpeechRecognition<br/>browser voice mode"]
         TTS["SpeechSynthesis<br/>read aloud"]
     end
-    subgraph API["FastAPI backend (Render)"]
+    subgraph API["FastAPI (Vercel Python function at /api; Whisper only when self-hosted)"]
         T["POST /api/transcribe"]
         C["POST /api/chat"]
         S["GET /api/schemes"]
@@ -53,6 +56,7 @@ flowchart LR
         D[("schemes.json<br/>demo data, 3 languages")]
     end
     MR -- "audio (in memory only)" --> T --> W
+    SR -- transcript --> UI
     W -- transcript --> UI
     UI -- "confirmed question + language" --> C --> A --> D
     S --> D
@@ -60,7 +64,9 @@ flowchart LR
     UI --> TTS
 ```
 
-**Request flow for a voice question**
+Static frontend and API are served from the same Vercel domain: `vercel.json` rewrites `/api/*` and `/health` to the Python function in [api/index.py](api/index.py), which imports the FastAPI app from `backend/`. Whisper does not fit within Vercel's function size and CPU limits, so on Vercel the app uses browser speech recognition instead.
+
+**Request flow for a voice question (Whisper mode)**
 
 1. The user picks a language and taps the mic. The browser asks for microphone permission.
 2. Audio is recorded with MediaRecorder (up to 60 seconds) and posted to `/api/transcribe` with the language hint.
@@ -86,7 +92,7 @@ flowchart LR
 | Speech-to-text | Faster-Whisper (CTranslate2, CPU, int8) |
 | Text-to-speech | Browser SpeechSynthesis API |
 | Data | `backend/data/schemes.json` (9 services, en/hi/te) |
-| Hosting | Vercel (frontend), Render (backend) |
+| Hosting | Vercel: static frontend plus a Python function for the API |
 
 ## 6. Project structure
 
@@ -102,8 +108,9 @@ frontend/
   src/hooks.ts         useRecorder (MediaRecorder) and useSpeech (SpeechSynthesis)
   src/api.ts           API client, reads VITE_API_BASE_URL
   src/i18n.ts          UI strings in Telugu, Hindi, English
-  vercel.json
-render.yaml            Render blueprint for the backend
+api/index.py           Vercel Python function entry point (imports backend/app)
+vercel.json            Vercel build, function and rewrite config
+requirements.txt       Python dependencies for the Vercel function (no Whisper)
 ```
 
 ## 7. Local setup
@@ -180,49 +187,45 @@ The suite (15 tests) covers dataset shape and honesty, scheme endpoints, intent 
 
 Frontend: `cd frontend && npm run build` type-checks and builds.
 
-## 11. Deploying the frontend to Vercel
+## 11. Deploying to Vercel
 
-1. Import the repository in Vercel.
-2. Set **Root Directory** to `frontend`. Vercel detects Vite. Build command `npm run build`, output directory `dist` (also set in [frontend/vercel.json](frontend/vercel.json)).
-3. Add the environment variable `VITE_API_BASE_URL` set to your backend URL, for example `https://bhashabuddy-api.onrender.com`, with no trailing slash.
-4. Deploy. Vercel serves over HTTPS, which browsers require for microphone access.
+Everything (frontend and API) deploys as one Vercel project from the **repository root**.
 
-Or with the CLI: `cd frontend && npx vercel --prod`, then add `VITE_API_BASE_URL` in the project settings and redeploy.
+```bash
+cd BashaBuddy          # repository root, not frontend/
+npx vercel --prod
+```
 
-## 12. Deploying the backend to Render
+On first run choose **Create a new project**. Leave **Root Directory** empty (the repository root). Do **not** set `VITE_API_BASE_URL`: the frontend calls `/api` on its own domain. All build settings live in [vercel.json](vercel.json):
 
-The backend is a normal Python web service and does not run on Vercel.
+- Install: `cd frontend && npm ci`, build: `cd frontend && npm run build`, output: `frontend/dist`
+- Python function `api/index.py` with dependencies from the root `requirements.txt`
+- Rewrites `/api/*` and `/health` to the function
 
-1. In Render, choose **New → Blueprint** and point it at this repository. It reads [render.yaml](render.yaml).
-2. Set `ALLOWED_ORIGINS` to your Vercel URL (for example `https://bhashabuddy.vercel.app`).
-3. Deploy. Health check path is `/health`.
+Importing the GitHub repository in the Vercel dashboard works the same way (root directory empty, no environment variables needed).
 
-Manual setup instead: root directory `backend`, build command `pip install -r requirements.txt`, start command `uvicorn app.main:app --host 0.0.0.0 --port $PORT`.
+**Voice on Vercel.** Speech-to-text uses the browser's speech recognition, which works in Chrome, Edge and Android Chrome. Firefox and some Safari versions do not support it; there the mic is disabled and text input still works. Microphone access needs HTTPS, which Vercel provides.
 
-**Free tier notes**
+## 12. Running the backend with Whisper (optional)
 
-- **Cold starts.** Free services sleep after inactivity. The first request can take about a minute while the service wakes up and then loads the Whisper model. The UI shows "Server offline" with a retry button, and the speech badge shows "Voice is starting…" until the model is ready.
-- **Memory.** The free plan has 512 MB. `base` fits by our measurement, but if the service restarts with out-of-memory errors, set `WHISPER_MODEL=tiny` or `WHISPER_ENABLED=false`. Text chat works either way.
-- **Model download** happens on every fresh instance because the free plan has no persistent disk.
-
-Any host that runs Python works (Railway, Fly.io, a VM). Use the same start command.
+To use the open-source Faster-Whisper model for voice instead of the browser recognizer, run the backend on any machine or Python host with at least 512 MB RAM (see [Local setup](#7-local-setup) and [Speech-to-text setup](#8-speech-to-text-setup)) and build the frontend with `VITE_API_BASE_URL` pointing at it. The frontend switches to Whisper mode automatically whenever `/health` reports `"speech_to_text": "ready"`.
 
 ## 13. Limitations
 
 - **Demo data.** Nine services with general, non-numeric guidance. No income limits, benefit amounts or deadlines, on purpose. Rules vary by state, and the data has not been verified against official sources. `last_verified` is `null` for every entry.
 - **Official links.** Only included where the national portal responded when this project was built (scholarships.gov.in, nfsa.gov.in, pmmvy.wcd.gov.in, uidai.gov.in). Others show "Please verify through the official government portal."
 - **Rule-based understanding.** Keyword matching handles common phrasings in all three languages, including Telugu and Hindi suffixes, but it will miss unusual wording. It does not reason about a user's personal situation and never confirms eligibility.
-- **Speech accuracy.** Whisper `base` is weak on Telugu and on mixed-language speech. `small` is much better but needs more memory. The transcript review step exists for this reason.
+- **Speech accuracy.** Browser recognition quality depends on the browser and is unavailable in Firefox. Whisper `base` is weak on Telugu and on mixed-language speech; `small` is much better but needs more memory. The transcript review step exists for this reason.
 - **Read-aloud** depends on the voices installed on the device. Many Android phones have Hindi and Telugu voices; many desktop browsers lack Telugu.
 - **No persistence.** Conversations live only in the browser tab. Feedback is counted in memory and resets on restart.
 
 ## 14. Safety and data privacy
 
 - **No accounts and no personal data collected.** The app never asks for names, Aadhaar numbers, OTPs, passwords or bank details, and warns users who offer them.
-- **Recordings are not stored.** Audio is transcribed in memory and discarded after the request.
+- **Recordings are not stored by BhashaBuddy.** In Whisper mode, audio is transcribed in memory and discarded after the request. In browser mode (the Vercel deployment), the browser's own speech service converts speech to text (Chrome uses Google's service) and BhashaBuddy only receives the text.
 - **No government database access.** It cannot submit, track or change any application, and says so.
 - **Input validation.** Messages are limited to 1000 characters; audio uploads are limited by size and must be an audio type; invalid requests get clear 4xx errors. Errors returned to the browser never contain stack traces or configuration.
-- **CORS** is restricted to configured frontend origins.
+- **CORS** is restricted to configured frontend origins. On Vercel the frontend and API share one domain, so no cross-origin access is needed.
 - **Untrusted input.** User text is matched against keywords only. It is never executed or used to build prompts, and instructions like "ignore previous instructions" get a refusal.
 - **Emergencies** are directed to 112 and Tele-MANAS (14416).
 - **No secrets.** The project needs no API keys. `.env` files and model files are git-ignored.
