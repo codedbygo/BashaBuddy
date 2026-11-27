@@ -3,185 +3,216 @@
 <head>
 <meta charset="utf-8">
 <title>BhashaBuddy pitch deck</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&family=Noto+Sans+Telugu:wght@500;700&family=Noto+Sans+Devanagari:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700;800&family=Noto+Sans+Telugu:wght@500;700&family=Noto+Sans+Devanagari:wght@500;700&display=swap" rel="stylesheet">
 <style>
   @page { size: 1280px 720px; margin: 0; }
   * { box-sizing: border-box; margin: 0; }
   body { font-family: "Noto Sans", "Noto Sans Telugu", "Noto Sans Devanagari", sans-serif; color: #1d2a2a; }
-  .slide { width: 1280px; height: 720px; padding: 64px 80px; background: #fbf8f3; position: relative; page-break-after: always; overflow: hidden; display: flex; flex-direction: column; }
+  .slide { width: 1280px; height: 720px; padding: 60px 80px 70px; background: #fbf8f3; position: relative; page-break-after: always; overflow: hidden; display: flex; flex-direction: column; }
   .slide:last-child { page-break-after: auto; }
-  .kicker { font-size: 18px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #e8871e; margin-bottom: 14px; }
-  h1 { font-size: 72px; line-height: 1.05; letter-spacing: -.02em; }
-  h2 { font-size: 46px; line-height: 1.12; letter-spacing: -.01em; margin-bottom: 30px; max-width: 1060px; }
-  p, li { font-size: 24px; line-height: 1.45; }
-  ul { padding-left: 28px; }
-  li { margin-bottom: 12px; }
+  .kicker { font-size: 17px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #d9761a; margin-bottom: 12px; }
+  h1 { font-size: 70px; line-height: 1.05; letter-spacing: -.02em; font-weight: 800; }
+  h2 { font-size: 42px; line-height: 1.12; letter-spacing: -.01em; margin-bottom: 26px; max-width: 1100px; font-weight: 800; }
+  p, li { font-size: 22px; line-height: 1.45; }
+  ul { padding-left: 26px; }
+  li { margin-bottom: 10px; }
   li::marker { color: #0f5c5a; }
   .muted { color: #5b6766; }
-  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 44px; }
-  .cols3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-  .card { background: #fff; border-radius: 20px; padding: 26px 28px; box-shadow: 0 1px 0 rgba(0,0,0,.06), 0 0 0 1px rgba(0,0,0,.05); }
-  .card h3 { font-size: 24px; color: #0f5c5a; margin-bottom: 10px; }
-  .card p, .card li { font-size: 19px; }
-  .card li { margin-bottom: 6px; }
-  .foot { position: absolute; left: 80px; right: 80px; bottom: 30px; display: flex; justify-content: space-between; font-size: 15px; color: #8a9493; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+  .cols3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  .cols4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+  .card { background: #fff; border-radius: 18px; padding: 22px 24px; box-shadow: 0 0 0 1px rgba(0,0,0,.06); }
+  .card h3 { font-size: 22px; color: #0f5c5a; margin-bottom: 8px; }
+  .card p, .card li { font-size: 18px; line-height: 1.42; }
+  .card li { margin-bottom: 5px; }
+  .stat b { display: block; font-size: 54px; line-height: 1; color: #0f5c5a; font-weight: 800; margin-bottom: 10px; letter-spacing: -.02em; }
+  .stat p { font-size: 18px; }
+  .foot { position: absolute; left: 80px; right: 80px; bottom: 26px; display: flex; justify-content: space-between; gap: 30px; font-size: 13px; color: #8a9493; }
+  .src { font-size: 13px; color: #8a9493; line-height: 1.35; }
   .brand { display: flex; align-items: center; gap: 14px; font-weight: 700; font-size: 26px; }
-  .logo { width: 52px; height: 52px; border-radius: 14px; background: #0f5c5a; display: grid; place-items: center; }
-  .title { background: #0f5c5a; color: #fff; justify-content: center; }
-  .title .kicker { color: #f6b46b; }
-  .title p { color: #d6ebe8; }
-  .title .foot { color: #9cc7c2; }
-  .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
-  .step { background: #fff; border-radius: 20px; padding: 24px; box-shadow: 0 0 0 1px rgba(0,0,0,.05); }
-  .step .num { display: block; font-size: 40px; color: #e8871e; line-height: 1; margin-bottom: 12px; }
-  .step p { font-size: 19px; line-height: 1.4; }
-  .quote { font-size: 28px; line-height: 1.4; border-left: 6px solid #e8871e; padding-left: 24px; margin-top: 8px; }
+  .logo { width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; background: #fff; }
+  .dark { background: #0f5c5a; color: #fff; }
+  .dark .kicker { color: #f6b46b; }
+  .dark p, .dark li { color: #d6ebe8; }
+  .dark .foot { color: #9cc7c2; }
+  .dark li::marker { color: #f6b46b; }
+  .quote { font-size: 26px; line-height: 1.45; border-left: 6px solid #e8871e; padding-left: 26px; }
   table { border-collapse: collapse; width: 100%; font-size: 17px; line-height: 1.35; }
-  .tight h2 { margin-bottom: 18px; font-size: 40px; }
-  td, th { text-align: left; padding: 8px 12px; border-bottom: 1px solid rgba(0,0,0,.08); vertical-align: top; }
-  th { font-size: 16px; text-transform: uppercase; letter-spacing: .06em; color: #5b6766; }
-  td:first-child { font-weight: 600; color: #0f5c5a; white-space: nowrap; }
-  .tag { display: inline-block; font-size: 15px; font-weight: 700; padding: 3px 10px; border-radius: 999px; background: #e3f0ee; color: #0f5c5a; }
-  .warn { background: #fdf1e2; color: #7a4510; }
+  td, th { text-align: left; padding: 9px 12px; border-bottom: 1px solid rgba(0,0,0,.08); vertical-align: top; }
+  th { font-size: 14px; text-transform: uppercase; letter-spacing: .06em; color: #5b6766; }
+  td:first-child { font-weight: 700; color: #0f5c5a; }
+  tr.us td { background: #e3f0ee; }
+  .tag { display: inline-block; font-size: 14px; font-weight: 700; padding: 3px 10px; border-radius: 999px; background: #e3f0ee; color: #0f5c5a; }
+  .num { display: block; font-size: 34px; color: #e8871e; font-weight: 800; line-height: 1; margin-bottom: 10px; }
+  .big { font-size: 30px; line-height: 1.4; font-weight: 600; }
+  code { font-size: .9em; background: rgba(15,92,90,.08); padding: 1px 6px; border-radius: 6px; }
 </style>
 </head>
 <body>
 
-<!-- 1 -->
-<section class="slide title">
-  <div class="brand" style="margin-bottom:40px"><div class="logo" style="background:#fff"><svg width="30" height="30" viewBox="0 0 64 64"><path d="M14 18a6 6 0 0 1 6-6h24a6 6 0 0 1 6 6v18a6 6 0 0 1-6 6h-12l-10 9v-9h-2a6 6 0 0 1-6-6z" fill="#0f5c5a"/><circle cx="24" cy="27" r="3" fill="#e8871e"/><circle cx="32" cy="27" r="3" fill="#e8871e"/><circle cx="40" cy="27" r="3" fill="#e8871e"/></svg></div>BhashaBuddy</div>
-  <div class="kicker">Build for Bharat · Voice-first public services</div>
-  <h1>Government services,<br>explained in your language.</h1>
-  <p style="font-size:28px;margin-top:28px;max-width:900px">A voice assistant that explains schemes, certificates and public services in Telugu, Hindi and English, in simple words, with the documents and steps you need.</p>
-  <p style="margin-top:36px;font-size:22px">Live: bhashabuddy-xi.vercel.app &nbsp;·&nbsp; Code: github.com/codedbygo/BashaBuddy</p>
+<!-- 1. Title -->
+<section class="slide dark" style="justify-content:center">
+  <div class="brand" style="margin-bottom:36px"><div class="logo"><svg width="30" height="30" viewBox="0 0 64 64"><path d="M14 18a6 6 0 0 1 6-6h24a6 6 0 0 1 6 6v18a6 6 0 0 1-6 6h-12l-10 9v-9h-2a6 6 0 0 1-6-6z" fill="#0f5c5a"/><circle cx="24" cy="27" r="3" fill="#e8871e"/><circle cx="32" cy="27" r="3" fill="#e8871e"/><circle cx="40" cy="27" r="3" fill="#e8871e"/></svg></div>BhashaBuddy</div>
+  <h1>Ask the government<br>a question, out loud,<br>in your own language.</h1>
+  <p style="font-size:26px;margin-top:26px;max-width:980px">A voice-first guide to schemes, certificates and public services in Telugu, Hindi and English. It tells you what to carry and where to go, and it never guesses.</p>
+  <p style="margin-top:30px;font-size:20px">Live: bhashabuddy-xi.vercel.app &nbsp;·&nbsp; Code: github.com/codedbygo/BashaBuddy &nbsp;·&nbsp; Runs with <b style="color:#fff">docker compose up</b></p>
   <div class="foot"><span>Scaler × Wispr Flow · Build for Bharat</span><span>1</span></div>
 </section>
 
-<!-- 2 -->
+<!-- 2. The moment -->
 <section class="slide">
-  <div class="kicker">The problem</div>
-  <h2>Getting a basic certificate often means many trips, an agent's fee, or giving up.</h2>
-  <div class="cols">
-    <ul>
-      <li><b>Information is scattered</b> across central portals, state portals and office notice boards.</li>
-      <li><b>It is written in formal English</b> or bureaucratic language, on sites built for desktops.</li>
-      <li><b>People find out what is missing at the counter.</b> One forgotten document means another trip, another day of lost wages.</li>
-    </ul>
-    <ul>
-      <li><b>Agents fill the gap</b> and charge for information that should be free.</li>
-      <li><b>Text-first apps exclude</b> people who are more comfortable speaking than typing, in their own language.</li>
-      <li><b>Chatbots that guess</b> are dangerous here: a confident wrong answer about eligibility costs real money and time.</li>
-    </ul>
+  <div class="kicker">One morning in a Telangana village</div>
+  <h2>The scholarship deadline is next week. Her daughter needs an income certificate.</h2>
+  <p class="quote">She asks a neighbour which documents to take, loses a day's wages travelling to the service centre, and is told at the counter that one proof is missing. She comes back the next week. Or she pays an agent to find out what the website already says, in English.</p>
+  <div class="cols" style="margin-top:34px">
+    <p class="big">Nothing here failed because she was ineligible.</p>
+    <p class="big" style="color:#0f5c5a">It failed because the first question, <i>"what do I need and where do I go?"</i>, had no good answer in her language.</p>
   </div>
-  <div class="foot"><span>BhashaBuddy</span><span>2</span></div>
+  <div class="foot"><span>Illustrative user story based on the services BhashaBuddy covers</span><span>2</span></div>
 </section>
 
-<!-- 3 -->
+<!-- 3. Problem with evidence -->
 <section class="slide">
-  <div class="kicker">Our users</div>
-  <h2>People who need public services most, and find the websites hardest.</h2>
-  <div class="cols3">
-    <div class="card"><h3>Students</h3><p>Scholarships, income, caste and residence certificates for admissions. Usually the family member who handles the paperwork.</p></div>
-    <div class="card"><h3>Farmers</h3><p>Income support and land-linked schemes. Often on a basic Android phone, more at ease speaking Telugu or Hindi than typing.</p></div>
-    <div class="card"><h3>Senior citizens and women</h3><p>Old age and widow pensions, maternity support. Often depend on relatives or agents to find out what to bring.</p></div>
+  <div class="kicker">The problem, in numbers</div>
+  <h2>India went online in its own languages. Public service information did not follow.</h2>
+  <div class="cols4">
+    <div class="card stat"><b>98%</b><p>of India's 886 million active internet users access the internet in Indic languages.</p></div>
+    <div class="card stat"><b>55%</b><p>of internet users are now rural: 488 million people, the fastest-growing group.</p></div>
+    <div class="card stat"><b>&lt; 1 in 3</b><p>senior citizens from below-poverty-line households receive the national old age pension.</p></div>
+    <div class="card stat"><b>1000s</b><p>of central and state schemes, each with its own documents, offices and rules.</p></div>
   </div>
-  <p class="quote" style="margin-top:36px">Example user: a mother in a Telangana village whose daughter needs an income certificate for a scholarship. She wants to know, in Telugu, where to go and what to carry, before she spends a day travelling.</p>
-  <div class="foot"><span>BhashaBuddy</span><span>3</span></div>
-</section>
-
-<!-- 4 -->
-<section class="slide">
-  <div class="kicker">The product</div>
-  <h2>Speak naturally. Check what was heard. Get a simple answer. Listen to it.</h2>
-  <div class="steps">
-    <div class="step"><span class="num">1</span><p><b>Choose a language</b>: తెలుగు, हिंदी or English. The whole interface switches.</p></div>
-    <div class="step"><span class="num">2</span><p><b>Tap the mic and ask</b>, e.g. "What documents do I need for a ration card?"</p></div>
-    <div class="step"><span class="num">3</span><p><b>Confirm the transcript.</b> Edit it or record again. Nothing is sent unchecked.</p></div>
-    <div class="step"><span class="num">4</span><p><b>Get the answer</b>: documents, eligibility or steps, with the official source. Tap to hear it.</p></div>
-  </div>
-  <ul style="margin-top:26px">
-    <li><b>Follow-ups work:</b> after asking about scholarships, "what documents?" answers for scholarships.</li>
-    <li><b>Works without a mic:</b> typing and one-tap sample questions run the same flow.</li>
-    <li><b>Mobile-first:</b> large touch targets, Telugu and Devanagari fonts, works on small Android screens.</li>
+  <ul style="margin-top:28px">
+    <li><b>Awareness is the bottleneck, not eligibility.</b> Research on elderly villagers in Telangana found inadequate awareness was the key reason schemes went unused, and that simply informing people significantly raised uptake.</li>
   </ul>
+  <div class="foot"><span class="src">Sources: IAMAI and Kantar, Internet in India 2024. Health ministry survey reported by Down To Earth. Interventional study on elderly in Telangana, PMC10657053. Scheme counts: myScheme national platform.</span><span>3</span></div>
+</section>
+
+<!-- 4. Insight -->
+<section class="slide dark">
+  <div class="kicker">Our insight</div>
+  <h2 style="color:#fff">The hardest step is not the application. It is the question before it.</h2>
+  <div class="cols" style="margin-top:6px">
+    <ul>
+      <li><b style="color:#fff">People already speak this question</b> to neighbours, agents and counter staff, in Telugu or Hindi. Typing it into an English form is the unnatural part.</li>
+      <li><b style="color:#fff">The answer is small and structured:</b> which documents, who qualifies, which office, which steps. It does not need a chatbot that writes essays.</li>
+    </ul>
+    <ul>
+      <li><b style="color:#fff">A wrong answer is worse than none.</b> Invented eligibility rules cost wages and trust. So the assistant must answer only from sourced data and say "I don't know" otherwise.</li>
+      <li><b style="color:#fff">Voice plus confirmation</b> gives the speed of speaking with the accuracy of reading: the user sees and fixes the transcript before anything is answered.</li>
+    </ul>
+  </div>
   <div class="foot"><span>BhashaBuddy</span><span>4</span></div>
 </section>
 
-<!-- 5 -->
+<!-- 5. Product -->
 <section class="slide">
-  <div class="kicker">Trust by design</div>
-  <h2>In public services, an honest "I don't know" beats a confident guess.</h2>
-  <div class="cols">
+  <div class="kicker">The product</div>
+  <h2>Speak. Confirm. Understand. Listen.</h2>
+  <div class="cols4">
+    <div class="card"><span class="num">1</span><p><b>Choose a language.</b> తెలుగు, हिंदी or English. The whole interface switches, not just the answers.</p></div>
+    <div class="card"><span class="num">2</span><p><b>Tap and ask naturally.</b> "రేషన్ కార్డు కోసం ఏ పత్రాలు కావాలి?" (What documents for a ration card?)</p></div>
+    <div class="card"><span class="num">3</span><p><b>Confirm what was heard.</b> Edit the transcript or record again. Nothing is answered unchecked.</p></div>
+    <div class="card"><span class="num">4</span><p><b>Get the next step.</b> Documents, eligibility or steps, with the official source. Tap to hear it read aloud.</p></div>
+  </div>
+  <div class="cols" style="margin-top:28px">
     <ul>
-      <li><b>Answers only from a structured dataset.</b> No language model inventing eligibility rules, amounts or deadlines.</li>
-      <li><b>Every answer is labelled</b> "Demo, not verified" and points to the official portal.</li>
-      <li><b>Unknown service?</b> It says it has no verified information, instead of answering something generic.</li>
+      <li><b>Remembers context:</b> after scholarships, "what documents?" answers for scholarships.</li>
+      <li><b>Asks when unsure:</b> "How do I apply?" gets "Which service do you mean?"</li>
     </ul>
     <ul>
-      <li><b>Never asks for OTPs, passwords, PINs</b> or bank details, and warns users who offer them.</li>
-      <li><b>Never claims to submit or track applications.</b> It is not connected to government databases.</li>
-      <li><b>No accounts, no stored recordings,</b> no personal data. Emergencies are pointed to 112.</li>
+      <li><b>No mic? No problem:</b> typing and one-tap questions run the same flow.</li>
+      <li><b>Built for small Android screens:</b> large targets, Indic fonts, works on a basic phone browser.</li>
     </ul>
   </div>
   <div class="foot"><span>BhashaBuddy</span><span>5</span></div>
 </section>
 
-<!-- 6 -->
-<section class="slide tight">
-  <div class="kicker">What it depends on</div>
-  <h2>Free and open building blocks. No paid AI APIs, no secret keys.</h2>
+<!-- 6. Alternatives -->
+<section class="slide">
+  <div class="kicker">Why existing options fall short</div>
+  <h2>Everyone else makes the citizen do the translating.</h2>
   <table>
-    <tr><th>Part</th><th>What we use</th><th>Dependency and risk</th></tr>
-    <tr><td>Speech to text</td><td>Open-source Faster-Whisper (Docker / self-hosted), or the browser's built-in speech recognition on the Vercel deployment</td><td>Whisper "base" is weak on Telugu; "small" is better but needs about 1 GB RAM. Browser recognition needs Chrome or Edge and uses the browser vendor's speech service.</td></tr>
-    <tr><td>Answers</td><td>Rule-based intent detection over a structured dataset in 3 languages (Python, FastAPI)</td><td>Only as good as the data. Today's 9 services are demo data, not yet verified.</td></tr>
-    <tr><td>Read aloud</td><td>Browser SpeechSynthesis</td><td>Needs a Telugu or Hindi voice on the device. Common on Android, often missing on desktop. The app says so instead of failing silently.</td></tr>
-    <tr><td>Hosting</td><td>Vercel (frontend + API function); one-command Docker image</td><td>Free tier is enough for a pilot.</td></tr>
-    <tr><td>Scheme content</td><td>Official central and state portals</td><td>The biggest dependency: accurate, current, state-specific information from departments.</td></tr>
+    <tr><th style="width:22%">Option</th><th style="width:39%">What it does well</th><th>Where it breaks for our users</th></tr>
+    <tr><td>Government portals (myScheme, state e-district sites)</td><td>Comprehensive, official, searchable catalogues</td><td>Form and filter driven: you must know what to search for and read long eligibility text. Built for typing, not speaking.</td></tr>
+    <tr><td>Agents and middlemen</td><td>Speak your language, know the local office</td><td>Charge fees for public information, quality varies, and you depend on them every time.</td></tr>
+    <tr><td>General AI chatbots</td><td>Fluent, conversational, multilingual</td><td>Can sound confident while inventing income limits, deadlines or documents. In welfare, that costs real money.</td></tr>
+    <tr class="us"><td>BhashaBuddy</td><td>Voice-first in the user's language, answers like a helpful counter clerk</td><td>Grounded only in sourced data, every answer labelled, says "I don't know" for anything it cannot verify, never asks for OTPs.</td></tr>
   </table>
+  <p class="muted" style="margin-top:20px;font-size:19px">We see official portals as our source of truth, not our competitor: BhashaBuddy is the spoken front door to them.</p>
   <div class="foot"><span>BhashaBuddy</span><span>6</span></div>
 </section>
 
-<!-- 7 -->
+<!-- 7. Trust -->
 <section class="slide">
-  <div class="kicker">What works today</div>
-  <h2>A working prototype, live and tested.</h2>
+  <div class="kicker">Trust by design</div>
+  <h2>In public services, an honest "I don't know" beats a confident guess.</h2>
   <div class="cols">
     <ul>
-      <li>9 services: scholarships, income, caste and residence certificates, ration card, PM-KISAN, pensions, maternity support, Aadhaar</li>
-      <li>Full interface and answers in Telugu, Hindi and English</li>
-      <li>Voice input with transcript confirmation, read-aloud answers</li>
-      <li>Safety handling: sensitive data, emergencies, prompt-injection attempts</li>
+      <li><b>No language model writes the facts.</b> Intent detection picks the service and question type; every sentence of substance comes from a structured, sourced dataset.</li>
+      <li><b>Every answer is labelled</b> with its verification status and points to the official portal.</li>
+      <li><b>Unknown service?</b> "I don't have verified information about that yet," instead of a plausible-sounding answer.</li>
     </ul>
     <ul>
-      <li>Live on Vercel; starts locally with one command: <code>docker compose up</code></li>
-      <li>Automated tests for intents, data honesty, safety, validation and transcription errors</li>
-      <li>Handles failures clearly: mic denied, no voice on device, server unreachable</li>
-      <li><span class="tag warn">Honest limit</span> Scheme data is demo data and must be verified before real use</li>
+      <li><b>Never asks for OTPs, passwords or PINs,</b> and warns users who try to share them: protection against the fraud that targets exactly these users.</li>
+      <li><b>Never claims to submit or track applications.</b> It is not connected to any government database, and says so.</li>
+      <li><b>No accounts, no stored recordings, no personal data.</b> Emergencies are pointed to 112.</li>
     </ul>
   </div>
   <div class="foot"><span>BhashaBuddy</span><span>7</span></div>
 </section>
 
-<!-- 8 -->
-<section class="slide tight">
-  <div class="kicker">Launch plan</div>
-  <h2>Start where trust is built: one state, real data, real counters.</h2>
+<!-- 8. Built today -->
+<section class="slide">
+  <div class="kicker">What we built</div>
+  <h2>Not a mockup. A working product judges can open, run and break.</h2>
   <div class="cols3">
-    <div class="card"><span class="tag">Months 0 to 2</span><h3 style="margin-top:12px">Verified data</h3><ul><li>Verify the top 20 services for Telangana and Andhra Pradesh against official portals</li><li>Record source and date for every fact</li><li>Move to Whisper "small" for better Telugu</li></ul></div>
-    <div class="card"><span class="tag">Months 2 to 4</span><h3 style="margin-top:12px">Pilot</h3><ul><li>One college scholarship cell and one citizen service centre or NGO</li><li>Volunteers help first-time users</li><li>Measure: questions answered, wrong-answer reports, trips saved</li></ul></div>
-    <div class="card"><span class="tag">Months 4 to 9</span><h3 style="margin-top:12px">Scale</h3><ul><li>Add more Indian languages</li><li>WhatsApp and phone (IVR) access for basic phones</li><li>Partner with state departments to keep data current</li></ul></div>
+    <div class="card"><h3>Working today</h3><ul><li>9 services: scholarships, income, caste, residence certificates, ration card, PM-KISAN, pensions, maternity support, Aadhaar</li><li>Telugu, Hindi and English end to end</li><li>Voice in, transcript check, voice out</li></ul></div>
+    <div class="card"><h3>Engineered to hold up</h3><ul><li>Automated tests: intents, safety, data honesty, input validation, transcription failures</li><li>Graceful failure: mic denied, no voice on device, server unreachable</li><li>Zero paid APIs, zero secret keys</li></ul></div>
+    <div class="card"><h3>Easy to verify</h3><ul><li>Live on Vercel</li><li><code>docker compose up</code> runs everything, including open-source Faster-Whisper speech recognition</li><li>Open source on GitHub</li></ul></div>
   </div>
-  <p class="muted" style="margin-top:20px;font-size:21px">Success means fewer wasted trips: users arrive at the counter with the right documents the first time.</p>
+  <p class="muted" style="margin-top:22px;font-size:19px"><span class="tag" style="background:#fdf1e2;color:#7a4510">Honest limit</span> &nbsp;Today's scheme data is demo content written for the prototype. Verifying it is step one of our launch plan.</p>
   <div class="foot"><span>BhashaBuddy</span><span>8</span></div>
 </section>
 
-<!-- 9 -->
-<section class="slide title">
-  <div class="kicker">Try it</div>
-  <h1>Ask in your language.<br>Get the right next step.</h1>
-  <p style="font-size:26px;margin-top:30px">Open the live link, choose తెలుగు, tap the mic and ask about scholarships. Then ask "ఏ పత్రాలు కావాలి?" (What documents are needed?).</p>
-  <p style="margin-top:30px;font-size:22px">Live: bhashabuddy-xi.vercel.app<br>Code: github.com/codedbygo/BashaBuddy (run with <b>docker compose up</b>)</p>
-  <div class="foot"><span>Demo information. Verify details through official government sources before applying.</span><span>9</span></div>
+<!-- 9. Dependencies and risks -->
+<section class="slide">
+  <div class="kicker">What it depends on, and what could go wrong</div>
+  <h2>We know our weak points, and how we will handle each one.</h2>
+  <table>
+    <tr><th style="width:20%">Dependency</th><th style="width:38%">Risk</th><th>Mitigation</th></tr>
+    <tr><td>Accurate scheme data</td><td>The biggest one. Rules change and differ by state; stale data misleads.</td><td>Start with one state's top 20 services; store source and verified-on date per fact; partner with service centres to report changes.</td></tr>
+    <tr><td>Speech recognition</td><td>Accents, background noise and mixed Telugu-English speech.</td><td>Transcript confirmation before every answer; Whisper "small" or Indic-tuned models; browser recognition as a free fallback.</td></tr>
+    <tr><td>Read-aloud voices</td><td>Some devices have no Telugu voice installed.</td><td>App detects it and says so; text stays readable; add open-source Indic TTS server-side.</td></tr>
+    <tr><td>Reach</td><td>The least connected users may not open a web app.</td><td>Pilot with assisted access at service centres and colleges; then WhatsApp and phone (IVR) channels.</td></tr>
+    <tr><td>Cost</td><td>Hosting speech models costs money at scale.</td><td>Rule-based answers are nearly free; voice runs in the browser or on one small server.</td></tr>
+  </table>
+  <div class="foot"><span>BhashaBuddy</span><span>9</span></div>
+</section>
+
+<!-- 10. Launch plan -->
+<section class="slide">
+  <div class="kicker">Launch plan</div>
+  <h2>One state, real data, real counters. Then scale what works.</h2>
+  <div class="cols3">
+    <div class="card"><span class="tag">Months 0 to 2</span><h3 style="margin-top:10px">Verify</h3><ul><li>Top 20 services for Telangana and Andhra Pradesh checked against official portals</li><li>Source and date on every fact</li><li>Upgrade Telugu speech recognition</li></ul></div>
+    <div class="card"><span class="tag">Months 2 to 4</span><h3 style="margin-top:10px">Pilot</h3><ul><li>One college scholarship cell and one citizen service centre or NGO</li><li>Volunteers onboard first-time users</li><li>Weekly review of every "not helpful" answer</li></ul></div>
+    <div class="card"><span class="tag">Months 4 to 9</span><h3 style="margin-top:10px">Scale</h3><ul><li>More Indian languages and states</li><li>WhatsApp and phone access for basic phones</li><li>State department partnership to keep data current</li></ul></div>
+  </div>
+  <p style="margin-top:22px;font-size:20px"><b>Success metric:</b> the share of users who reach the counter with every document on their first visit. Supporting signals: questions answered, "not helpful" rate, and repeat use.</p>
+  <div class="foot"><span>BhashaBuddy</span><span>10</span></div>
+</section>
+
+<!-- 11. Close -->
+<section class="slide dark">
+  <div class="kicker">Why voice, why now</div>
+  <h2 style="color:#fff;font-size:46px">The next hundred million Indians online will speak before they type.</h2>
+  <ul style="max-width:1080px">
+    <li>Voice is the most natural interface for people who are new to the internet, less confident readers, or simply more comfortable in their mother tongue.</li>
+    <li>Open-source speech recognition now runs on a laptop, and every Android phone ships with speech built in. The cost of a voice-first public service has collapsed.</li>
+    <li>What is missing is a trustworthy layer between a spoken question and official information. That is BhashaBuddy.</li>
+  </ul>
+  <p style="margin-top:26px;font-size:22px"><b style="color:#fff">Try it:</b> open bhashabuddy-xi.vercel.app, choose తెలుగు, tap the mic, ask about scholarships, then ask "ఏ పత్రాలు కావాలి?"</p>
+  <div class="foot"><span>Demo information. Verify details through official government sources before applying.</span><span>11</span></div>
 </section>
 
 </body>
