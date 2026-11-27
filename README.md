@@ -111,9 +111,26 @@ frontend/
 api/index.py           Vercel Python function entry point (imports backend/app)
 vercel.json            Vercel build, function and rewrite config
 requirements.txt       Python dependencies for the Vercel function (no Whisper)
+Dockerfile             one image: built frontend + FastAPI + Faster-Whisper
+docker-compose.yml     one-command start
 ```
 
 ## 7. Local setup
+
+### Quick start with Docker (one command)
+
+```bash
+docker compose up --build
+```
+
+Open http://localhost:8000. This runs the full app, including Faster-Whisper voice input, in one container. No API keys or `.env` file needed.
+
+- On first start the Whisper `base` model (about 145 MB) downloads into a Docker volume. Voice input is ready about a minute later, and the badge changes from "Voice is starting…" to "Voice ready". Text questions work immediately.
+- Port 8000 already in use? `PORT=8080 docker compose up --build`, then open http://localhost:8080.
+- Better Telugu and Hindi recognition: `WHISPER_MODEL=small docker compose up --build` (needs about 1 GB RAM).
+- Stop with `docker compose down`.
+
+### Manual setup
 
 Requirements: Python 3.10 or newer, Node.js 20 or newer. No API keys.
 

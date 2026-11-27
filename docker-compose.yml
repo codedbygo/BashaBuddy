@@ -1,0 +1,18 @@
+# Start everything with:  docker compose up --build
+# Then open http://localhost:8000
+services:
+  bhashabuddy:
+    build: .
+    ports:
+      - "${PORT:-8000}:8000"
+    environment:
+      # tiny | base | small. "small" is better for Telugu and Hindi but needs about 1 GB RAM.
+      WHISPER_MODEL: ${WHISPER_MODEL:-base}
+      WHISPER_ENABLED: ${WHISPER_ENABLED:-true}
+    volumes:
+      # The Whisper model downloads once on first start (about 145 MB for "base") and is kept here.
+      - whisper-models:/models
+    restart: unless-stopped
+
+volumes:
+  whisper-models:

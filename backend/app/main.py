@@ -145,3 +145,11 @@ def feedback(req: FeedbackRequest):
     # Only counts are kept, in memory. No message text or personal data is stored.
     feedback_counts["helpful" if req.helpful else "not_helpful"] += 1
     return {"status": "received"}
+
+
+# Docker image: serve the built frontend from the same origin. Mounted last so API routes win.
+STATIC_DIR = os.getenv("STATIC_DIR")
+if STATIC_DIR and os.path.isdir(STATIC_DIR):
+    from fastapi.staticfiles import StaticFiles
+
+    app.mount("/", StaticFiles(directory=STATIC_DIR, html=True), name="frontend")
