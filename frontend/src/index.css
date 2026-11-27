@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Noto Sans", "Noto Sans Telugu", "Noto Sans Devanagari", system-ui, sans-serif;
+  --color-cream: #fbf8f3;
+  --color-sand: #f3ece1;
+  --color-ink: #1d2a2a;
+  --color-muted: #5b6766;
+  --color-brand: #0f5c5a;
+  --color-brand-dark: #0a4341;
+  --color-brand-soft: #e3f0ee;
+  --color-saffron: #e8871e;
+  --color-saffron-soft: #fdf1e2;
+}
+
+html { background: var(--color-cream); color: var(--color-ink); -webkit-tap-highlight-color: transparent; }
+body { min-height: 100dvh; }
+:focus-visible { outline: 3px solid var(--color-saffron); outline-offset: 2px; }
+
+@keyframes bar { 0%, 100% { transform: scaleY(0.3); } 50% { transform: scaleY(1); } }
+@keyframes ring { 0% { box-shadow: 0 0 0 0 rgb(220 38 38 / 0.45); } 100% { box-shadow: 0 0 0 22px rgb(220 38 38 / 0); } }
+@keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.animate-ring { animation: ring 1.4s ease-out infinite; }
+.animate-rise { animation: rise 0.25s ease-out both; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}

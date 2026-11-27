@@ -1,0 +1,23 @@
+# Render Blueprint for the BhashaBuddy API (frontend is deployed separately on Vercel).
+services:
+  - type: web
+    name: bhashabuddy-api
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.3
+      # Measured locally: "base" peaks around 384 MB, "tiny" around 343 MB. Free plan has 512 MB.
+      # If the service restarts with out-of-memory errors, use "tiny", or set WHISPER_ENABLED=false (text chat keeps working).
+      - key: WHISPER_MODEL
+        value: base
+      - key: WHISPER_ENABLED
+        value: "true"
+      - key: ALLOWED_ORIGINS
+        sync: false # set to your Vercel URL, e.g. https://bhashabuddy.vercel.app
+      - key: ALLOWED_ORIGIN_REGEX
+        sync: false # optional, e.g. https://bhashabuddy-.*\.vercel\.app for preview deployments
